@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.env
 
-/lib/core/secrets/
+# untuk data vital saya
+/lib/core/secrets
+
+.env
+>>>>>>> 3af287c44875994ace978b7aa21fadd30aae7d60
