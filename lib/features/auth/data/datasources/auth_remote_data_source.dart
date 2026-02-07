@@ -1,13 +1,14 @@
 import 'package:blog_app/core/error/exception.dart';
+import 'package:blog_app/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
   });
-  Future<String> signInWithEmailPassword({
+  Future<UserModel> signInWithEmailPassword({
     required String email,
     required String password,
   });
@@ -19,16 +20,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this.supabaseClient);
 
   @override
-  Future<String> signInWithEmailPassword({
+  Future<UserModel> signInWithEmailPassword({
     required String email,
     required String password,
   }) async {
-    // TODO: implement signInWithEmailPassword
-    throw UnimplementedError();
+    try {
+      final response = await supabaseClient.auth.signInWithPassword(
+        password: password,
+        email: email,
+      );
+
+      if (response.user == null) {
+        throw const ServerException('User is null!');
+      }
+
+      return UserModel.fromJson(response.user!.toJson());
+    } catch (err) {
+      throw ServerException(err.toString());
+    }
   }
 
   @override
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -37,13 +50,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await supabaseClient.auth.signUp(
         password: password,
         email: email,
-        data: {'name': name},
+        data: {'name': name}, // store name in user_metadata
       );
       if (response.user == null) {
-        throw ServerException('User is null!');
+        throw const ServerException('User is null!');
       }
 
-      return response.user!.id;
+      return UserModel.fromJson(response.user!.toJson());
     } catch (err) {
       throw ServerException(err.toString());
     }
