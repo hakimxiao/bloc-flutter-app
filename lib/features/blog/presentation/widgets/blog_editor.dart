@@ -17,6 +17,13 @@ class BlogEditor extends StatelessWidget {
       decoration: InputDecoration(hintText: hintText),
       maxLines:
           null, // jika null maka kontent textFormField akan otomatis menambah line baru
+      validator: (value) {
+        if (value!.trim().isEmpty) {
+          return '$hintText is missing!';
+        }
+
+        return null;
+      },
     );
   }
 }
