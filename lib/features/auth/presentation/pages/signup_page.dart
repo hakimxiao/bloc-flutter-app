@@ -43,6 +43,11 @@ class _SignUpPageState extends State<SignUpPage> {
               showSnackBar(context, state.message);
             } else if (state is AuthSuccess) {
               showSnackBar(context, 'success');
+              Navigator.pushAndRemoveUntil(
+                context,
+                SignUpPage.route(),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {
